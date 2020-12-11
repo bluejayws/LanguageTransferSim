@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.ArrayList;
+
 public class Main {
 
 
@@ -47,6 +49,10 @@ public class Main {
         //Year counter
         int yearCounter = 0;
 
+        //Population trackers; Every number recorded corresponds to "one year" or a loop of the while-loop
+        //Will have 5 generations * 20 year per generation = 100 recordings, for example.
+        ArrayList<Integer> languageAByTheYear = new ArrayList<>();
+        ArrayList<Integer> languageBByTheYear = new ArrayList<>();
 
 
         //---------------------------------Simulation starts here-------------------------------------------------------
@@ -59,9 +65,13 @@ public class Main {
             languageBPopulation = populationAdjust(birthRate,deathRate,immigrationRate,emmigrationRateB,languageBPopulation);
 
             //ToDo: Language adjustments (correspond to the population)
-            
+
             //ToDo: A way to store information, and what information?
             // Idea; Store everything sequentially and transport it to excel ¯\_(ツ)_/¯
+
+            //Track our new population of each language after adjusting for language conversion and pop. adjustments
+            languageAByTheYear.add(languageAPopulation);
+            languageBByTheYear.add(languageBPopulation);
 
             //Generation counter; The time lapse of our simulation
             if (yearCounter%20 == 0) {// If 20 years have passed, we've gone up a generation
@@ -95,11 +105,12 @@ public class Main {
         //Population +/- from immigration/emigration
         //OK I used calculateDead() for both but it's really because after seeing that calculateDead and calculateBirth
         // are really the same function just with different parameters, then just repeat same operations for both
-        // totalImmigrated and totalEmigrated
+        // totalImmigrated and totalEmigrated. Their addition/subtraction is handled in the next newPopulation assignment...
         int totalImmigrated =  calculateDead(immigrationRate,languagePop);
         int totalEmigrated = calculateBirth(emmigrationRate, languagePop);
 
         //Calculate net population gain
+        //...here v v v
         newPopulation = newPopulation - totalDead - totalEmigrated + totalBorn + totalImmigrated;
 
         return newPopulation;
@@ -108,9 +119,9 @@ public class Main {
     //Calculate the amount dead for a given population and death rate
     private static int calculateDead(Double deathRate, Integer languagePop) {
 
-        //Calculate net loss
+        //Calculate net loss; Magnitude
         double amountDied = languagePop * deathRate;
-        //Convert to int
+        //Convert to integer
         double ceilDied = Math.ceil(amountDied);
         int deadRoundedUp = (int) ceilDied;
         return deadRoundedUp;
@@ -121,7 +132,9 @@ public class Main {
     //Note to self: OK this does the exact same thing as calculateDeath
     private static int calculateBirth(Double birthRate, Integer languagePop) {
 
+        //Calculate net gain; Magnitude
         double amountBorn = languagePop * birthRate;
+        //Convert to integer
         double ceilBorn = Math.ceil(amountBorn);
         int bornRoundedUp = (int) ceilBorn;
         return bornRoundedUp;
